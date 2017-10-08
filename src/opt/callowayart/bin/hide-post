@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+require_once dirname(dirname(__FILE__)) . '/wp-load.php';
+require_once dirname(dirname(__FILE__)) . '/wp-admin/includes/image.php';
+require_once dirname(dirname(__FILE__)) . '/wp-admin/includes/taxonomy.php';
+
+echo wp_update_post([
+  'ID' => $argv[1],
+  'post_status' => 'private'
+]);

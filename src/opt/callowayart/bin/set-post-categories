@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+require_once dirname(dirname(__FILE__)) . '/wp-load.php';
+require_once dirname(dirname(__FILE__)) . '/wp-admin/includes/image.php';
+require_once dirname(dirname(__FILE__)) . '/wp-admin/includes/taxonomy.php';
+
+$payload = json_decode($argv[1]);
+echo wp_set_post_categories($payload['post_id'], $payload['categories'], false);

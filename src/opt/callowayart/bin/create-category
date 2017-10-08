@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+require_once dirname(dirname(__FILE__)) . '/wp-load.php';
+require_once dirname(dirname(__FILE__)) . '/wp-admin/includes/image.php';
+require_once dirname(dirname(__FILE__)) . '/wp-admin/includes/taxonomy.php';
+
+$name = trim($argv[1]);
+
+if (!is_category($name)) {
+  echo wp_create_category($name);
+}

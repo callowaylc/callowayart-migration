@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  bootstrap:
+    depends_on:
+      - db
+    links:
+      - db
+    build:
+     context: ./
+     dockerfile: ./Dockerfile
+    image: bootstrap
+    command: ./bootstrap.sh
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    ports:
+      - 3306:3306
+  wordpress:
+     depends_on:
+       - db
+     image: wordpress:4.8.2-php5.6-apache
+     ports:
+       - "80:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+     volumes:
+       - ./build/wordpress:/var/www/html:ro
+
+
