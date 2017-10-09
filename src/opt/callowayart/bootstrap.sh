@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-alias database="mysql -hdb -uwordpress -pwordpress"
-database -e"
-  DROP DATABASE IF EXISTS wordpress
-  DROP DATABASE IF EXISTS callowayart
+mysql -hdb -uroot -pwordpress -e"
+  DROP DATABASE IF EXISTS wordpress;
+  DROP DATABASE IF EXISTS callowayart;
 
-  CREATE DATABASE wordpress
-  CREATE DATABASE callowayart
+  CREATE DATABASE wordpress;
+  CREATE DATABASE callowayart;
 "
 
-#database -Dwordpress < ./migration.sql
-#database -Dcallowayart < ./callowayart.sql
+mysql -hdb -uroot -pwordpress -Dcallowayart < ./callowayart.sql
+mysql -hdb -uroot -pwordpress -Dwordpress < ./migration.sql
 
-database -e"show databases"
+rake -T
+rake migrate

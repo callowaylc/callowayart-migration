@@ -7,6 +7,7 @@ require 'yaml'
 require 'slugify'
 require 'json'
 require 'logger'
+require 'unidecoder'
 
 class String
   alias_method :old_slug, :slugify

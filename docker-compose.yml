@@ -10,7 +10,9 @@ services:
      context: ./
      dockerfile: ./Dockerfile
     image: bootstrap
-    command: ./bootstrap.sh
+    command: bash -c ./bootstrap.sh
+    volumes:
+      - ./src/opt/callowayart/bootstrap.sh:/opt/callowayart/bootstrap.sh
   db:
     image: mysql:5.7
     restart: always
@@ -33,6 +35,6 @@ services:
        WORDPRESS_DB_USER: wordpress
        WORDPRESS_DB_PASSWORD: wordpress
      volumes:
-       - ./build/wordpress:/var/www/html:ro
+       - ./build/wordpress:/var/www/html:rw
 
 

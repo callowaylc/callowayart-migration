@@ -6,7 +6,7 @@ desc "migrate to new callowayart"
 task :migrate do
   # get all works
   listings = [ ]
-  posts    = query 'wordpress_callowayart', %{
+  posts    = query 'callowayart', %{
     SELECT
       ID as id,
       post_content as content,
@@ -33,7 +33,7 @@ task :migrate do
       } =~ /200/
 
     rescue
-      meta = query 'wordpress_callowayart', %{
+      meta = query 'callowayart', %{
         SELECT
           meta_value
         FROM
@@ -51,9 +51,9 @@ task :migrate do
       end
     end
 
-    listings << memo('/listing', listing['id']) do
+    listings << begin
       # get listing categories
-      listing['categories'] = query 'wordpress_callowayart', %{
+      listing['categories'] = query 'callowayart', %{
         SELECT
           wpt.slug,
           wpt.term_id as id
@@ -68,7 +68,7 @@ task :migrate do
       }
 
       # get artist/exhibit iterating through terms
-      ( query 'wordpress_callowayart', %{
+      ( query 'callowayart', %{
         SELECT
           wpt.term_id as id,
           wpt.slug,
@@ -82,7 +82,7 @@ task :migrate do
           wptr.object_id = #{ listing['id'] }
 
       } ).each do | term |
-        ( query 'wordpress_callowayart', %{
+        ( query 'callowayart', %{
           SELECT
             description
           FROM wp_term_taxonomy wptt
@@ -99,7 +99,7 @@ task :migrate do
           }
         end
 
-        ( query 'wordpress_callowayart', %{
+        ( query 'callowayart', %{
           SELECT
             description
           FROM wp_term_taxonomy wptt
@@ -201,7 +201,7 @@ task :migrate do
       listing = artist['listings'].first
       artist['thumbnail_id'] = listing['thumbnail_id']
 
-      query 'devbrand_wdp-103964', %{
+      query 'wordpress', %{
         UPDATE wp_postmeta
         SET meta_value = '#{ listing['thumbnail_id'] }'
         WHERE
@@ -231,21 +231,21 @@ task :migrate do
   # dump migration database, convert to utf8, and reimport
   logs "force utf8 conversion and reimport"
   command %{
-    export MYSQL_PWD=mysecretpassword
+    export MYSQL_PWD=wordpress
     mysqldump \
-      -h10.0.0.177 \
+      -hdb \
       -uroot \
       --opt \
       --skip-set-charset \
       --default-character-set=latin1 \
       --skip-extended-insert \
-        devbrand_wdp-103964 > /tmp/database.sql
+        wordpress > /tmp/database.sql
 
     sed -i s/latin1/utf8/gI /tmp/database.sql
     #cat /tmp/database.sql | mysql \
     #  -h10.0.0.177 \
     #  -uroot \
-    #  -Ddevbrand_wdp-103964
+    #  -Dwordpress
     #rm /tmp/database.sql
   }
 end
@@ -305,14 +305,14 @@ private def insert_work artist, listing
 
   begin
     listing['thumbnail_id'] = wp_codex(`
-      sudo docker exec php-0 bash -c '/application/bin/post #{ listing['uri'] }'
+      ./bin/post #{ listing['uri'] }
     `)
   rescue _
     listing['_thumbnail_id'] = 0
   end
 
   # insert descriptive post
-  query 'devbrand_wdp-103964', %{
+  query 'wordpress', %{
     INSERT INTO
       wp_posts(
         post_author,
@@ -351,7 +351,7 @@ private def insert_work artist, listing
   }
 
   listing['id'] = (
-    query "devbrand_wdp-103964", "select last_insert_id() as last_insert_id"
+    query "wordpress", "select last_insert_id() as last_insert_id"
   )[0]['last_insert_id']
 
   {
@@ -371,7 +371,7 @@ private def insert_work artist, listing
     :'eg-artist' => deslug( artist['slug'] )
 
   }.each do | field, value |
-    query "devbrand_wdp-103964", %{
+    query "wordpress", %{
       INSERT INTO wp_postmeta (
         post_id, meta_key, meta_value
       ) values (
@@ -385,7 +385,7 @@ private def insert_work artist, listing
   listing['categories'].each do | category |
     $categories[category['slug']] ||= begin
 
-      exists = query 'devbrand_wdp-103964', %{
+      exists = query 'wordpress', %{
         SELECT wpt.term_id
         FROM wp_terms wpt
           INNER JOIN wp_term_taxonomy wptt
@@ -399,21 +399,21 @@ private def insert_work artist, listing
       if exists.empty?
         logs 'create category', slug: category['slug'], empty: exists.nil?
         id = wp_codex(`
-          sudo docker exec php-0 bash -c '/application/bin/create-category "#{ deslug category['slug'] }"'
+          ./bin/create-category "#{ deslug category['slug'] }"
         `)
       else
         id = exists.first['term_id']
       end
 
       logs 'retrieve category', slug: category['slug'], id: id
-      result = query 'devbrand_wdp-103964', %{
+      result = query 'wordpress', %{
         SELECT term_taxonomy_id
         FROM wp_term_taxonomy
         WHERE term_id = #{ id }
       }
 
       if result.empty?
-        query 'devbrand_wdp-103964', %{
+        query 'wordpress', %{
           INSERT INTO wp_term_taxonomy(
             term_id, taxonomy, description
           ) values (
@@ -422,10 +422,10 @@ private def insert_work artist, listing
         }
 
         term_taxonomy_id = (
-          query "devbrand_wdp-103964", "select last_insert_id() as last_insert_id"
+          query "wordpress", "select last_insert_id() as last_insert_id"
         )[0]['last_insert_id']
       else
-        query 'devbrand_wdp-103964', %{
+        query 'wordpress', %{
           update wp_term_taxonomy
           set taxonomy = 'work-category'
           where term_taxonomy_id = #{ result.first['term_taxonomy_id'] }
@@ -433,7 +433,7 @@ private def insert_work artist, listing
         term_taxonomy_id = result.first['term_taxonomy_id']
       end
 
-      query "devbrand_wdp-103964", %{
+      query "wordpress", %{
         INSERT INTO wp_term_relationships(
           term_taxonomy_id, object_id
         ) values (
@@ -446,7 +446,7 @@ private def insert_work artist, listing
     # to private
     if category['slug'] =~ /backend/i
       wp_codex(`
-        sudo docker exec php-0 bash -c '/application/bin/hide-post #{ listing['id'] }'
+        ./bin/hide-post #{ listing['id'] }
       `)
     end
   end
@@ -461,7 +461,7 @@ end
 
 private def insert_exhibit artist, listing, exhibit
   logs 'insert exhibit', payload: exhibit
-  query 'devbrand_wdp-103964', %{
+  query 'wordpress', %{
     INSERT INTO
       wp_posts(
         post_author,
@@ -500,7 +500,7 @@ private def insert_exhibit artist, listing, exhibit
   }
 
   exhibit['id'] = (
-    query "devbrand_wdp-103964", "select last_insert_id() as last_insert_id"
+    query "wordpress", "select last_insert_id() as last_insert_id"
   )[0]['last_insert_id']
 
   {
@@ -515,7 +515,7 @@ private def insert_exhibit artist, listing, exhibit
     _thumbnail_id: listing['thumbnail_id'] || 0
 
   }.each do | field, value |
-    query "devbrand_wdp-103964", %{
+    query "wordpress", %{
       INSERT INTO wp_postmeta (
         post_id, meta_key, meta_value
       ) values (
@@ -528,7 +528,7 @@ end
 private def insert_artist artist
   logs 'insert artist', slug: artist['slug'], description: artist['description'].to_ascii
 
-  query 'devbrand_wdp-103964', %{
+  query 'wordpress', %{
     INSERT INTO
       wp_posts(
         post_author,
@@ -572,7 +572,7 @@ private def insert_artist artist
   }
 
   artist['id'] = (
-    query "devbrand_wdp-103964", "select last_insert_id() as last_insert_id"
+    query "wordpress", "select last_insert_id() as last_insert_id"
   )[0]['last_insert_id']
 
   {
@@ -606,7 +606,7 @@ private def insert_artist artist
     "
 
   }.each do | field, value |
-    query "devbrand_wdp-103964", %{
+    query "wordpress", %{
       INSERT INTO wp_postmeta (
         post_id, meta_key, meta_value
       ) values (
@@ -615,7 +615,7 @@ private def insert_artist artist
     }
   end
 
-  query "devbrand_wdp-103964", %{
+  query "wordpress", %{
     INSERT INTO
       wp_term_relationships (
         object_id, term_taxonomy_id
