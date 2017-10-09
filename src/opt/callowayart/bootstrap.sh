@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+while ! nc -z db 3306; do
+  sleep 0.1 # wait for 1/10 of the second before check again
+done
+
 mysql -hdb -uroot -pwordpress -e"
   DROP DATABASE IF EXISTS wordpress;
   DROP DATABASE IF EXISTS callowayart;
