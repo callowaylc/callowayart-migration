@@ -14,6 +14,9 @@ services:
     volumes:
       - ./src/opt/callowayart/bootstrap.sh:/opt/callowayart/bootstrap.sh
     container_name: migration-bootstrap
+    environment:
+      MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
+      MIGRATION_AWS_SECRET_ACCESS_KEY: ${MIGRATION_AWS_SECRET_ACCESS_KEY}
   db:
     image: mysql:5.7
     restart: always
@@ -41,4 +44,4 @@ services:
     container_name: migration-wordpress
     environment:
       MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
-      MIGRATION_SECRET_ACCESS_KEY: ${MIGRATION_SECRET_ACCESS_KEY}
+      MIGRATION_AWS_SECRET_ACCESS_KEY: ${MIGRATION_AWS_SECRET_ACCESS_KEY}
