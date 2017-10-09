@@ -13,6 +13,7 @@ services:
     command: bash -c ./bootstrap.sh
     volumes:
       - ./src/opt/callowayart/bootstrap.sh:/opt/callowayart/bootstrap.sh
+    container_name: migration-bootstrap
   db:
     image: mysql:5.7
     restart: always
@@ -23,18 +24,21 @@ services:
       MYSQL_PASSWORD: wordpress
     ports:
       - 3306:3306
+    container_name: migration-db
   wordpress:
-     depends_on:
-       - db
-     image: wordpress:4.8.2-php5.6-apache
-     ports:
-       - "80:80"
-     restart: always
-     environment:
-       WORDPRESS_DB_HOST: db:3306
-       WORDPRESS_DB_USER: wordpress
-       WORDPRESS_DB_PASSWORD: wordpress
-     volumes:
-       - ./build/wordpress:/var/www/html:rw
-
-
+    depends_on:
+      - db
+    image: wordpress:4.8.2-php5.6-apache
+    ports:
+      - "80:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    volumes:
+      - ./build/wordpress:/var/www/html:rw
+    container_name: migration-wordpress
+    environment:
+      MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
+      MIGRATION_SECRET_ACCESS_KEY: ${MIGRATION_SECRET_ACCESS_KEY}

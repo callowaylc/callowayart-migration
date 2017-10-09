@@ -11,5 +11,24 @@ mysql -hdb -uroot -pwordpress -e"
 mysql -hdb -uroot -pwordpress -Dcallowayart < ./callowayart.sql
 mysql -hdb -uroot -pwordpress -Dwordpress < ./migration.sql
 
+cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
+  INSERT INTO wp_users (
+    ID, user_login, user_pass, user_nicename, user_email, user_status, display_name, user_registered
+  ) VALUES (
+    '1000', 'admin', MD5('admin!'), 'tempuser', 'fubar@fubar.com', '0', 'admin', NOW()
+  );
+
+  INSERT INTO wp_usermeta (
+    umeta_id, user_id, meta_key, meta_value
+  ) VALUES (
+    NULL, '1000', 'wp_capabilities', 'a:1:{s:13:"administrator";b:1;}'
+  );
+  INSERT INTO wp_usermeta (
+    umeta_id, user_id, meta_key, meta_value
+  ) VALUES (
+    NULL, '1000', 'wp_user_level', '10'
+  );
+EOF
+
 rake -T
 rake migrate

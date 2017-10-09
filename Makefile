@@ -7,7 +7,7 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
 .PHONY: build
 all:
-	@ mkdir -p ./build
+	@ rm -rf ./build && mkdir -p ./build
 	@ aws s3 cp $(SECRETS) ./.secrets
 	@ aws s3 cp $(ARTIFACT_WORDPRESS) ./build
 	@ aws s3 cp $(ARTIFACT_SQL) ./build
@@ -26,8 +26,13 @@ build:
     		wordpress_callowayart \
       2>/dev/null > ./build/callowayart.sql
 
+	@ docker-compose build bootstrap
+	@ docker-compose run bootstrap
+
 .PHONY: release
 release:
+	@ docker-compose up -d --remove-orphans wordpress
+	@ docker cp ./src/var migration-wordpress:/
 
 # IMPORTANT - ensures arguments are not interpreted as make targets
 %:
