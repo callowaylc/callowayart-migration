@@ -35,4 +35,4 @@ cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
 EOF
 
 rake -T
-rake migrate
+#rake migrate
