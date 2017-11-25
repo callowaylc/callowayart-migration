@@ -30,7 +30,7 @@ build:
 	@ docker-compose run bootstrap
 
 .PHONY: release
-release: clean
+release:
 	@ docker-compose up -d --remove-orphans wordpress
 	@ docker cp ./src/var migration-wordpress:/
 
