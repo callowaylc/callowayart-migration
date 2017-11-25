@@ -36,7 +36,7 @@ release: clean
 
 .PHONY: clean
 clean:
-	@ docker-compose up -d --remove-orphans wordpress
+	@ docker-compose down -v --remove-orphans
 
 # IMPORTANT - ensures arguments are not interpreted as make targets
 %:
