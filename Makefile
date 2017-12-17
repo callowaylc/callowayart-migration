@@ -1,3 +1,4 @@
+export PORT ?= 80
 SECRETS ?= s3://callowayart/secrets/migration
 ARTIFACT_WORDPRESS ?= s3://callowayart/artifacts/migration/wordpress.tgz
 ARTIFACT_SQL ?= s3://callowayart/artifacts/migration/wordpress.sql.tgz
@@ -16,7 +17,7 @@ all:
 
 .PHONY: build
 build:
-	@ mysqldump \
+	#@ mysqldump \
 	  -C \
     -u $(DB_USER) \
     -h $(DB_HOST) \
@@ -26,13 +27,17 @@ build:
     		wordpress_callowayart \
       2>/dev/null > ./build/callowayart.sql
 
-	@ docker-compose build bootstrap
-	@ docker-compose run bootstrap
+	#@ docker-compose build bootstrap
+	#@ docker-compose run bootstrap
+	docker-compose --verbose build callowayart
 
 .PHONY: release
 release:
 	@ docker-compose up -d --remove-orphans wordpress
-	@ docker cp ./src/var migration-wordpress:/
+
+.PHONY: publish
+publish:
+
 
 .PHONY: clean
 clean:
