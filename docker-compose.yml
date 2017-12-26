@@ -7,8 +7,7 @@ services:
     links:
       - db
     build:
-     context: ./../../
-     dockerfile: ./docker/bootstrap/Dockerfile
+      dockerfile: ./docker/bootstrap/Dockerfile
     image: bootstrap
     command: bash -c ./bootstrap.sh
     volumes:
