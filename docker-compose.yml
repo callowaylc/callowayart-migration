@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services:
   bootstrap:
@@ -29,13 +29,14 @@ services:
       - 3306:3306
     container_name: migration-db
   callowayart:
+    image: ${REPOSITORY}
     depends_on:
       - db
     ports:
       - ${PORT}:${PORT}
     restart: always
     build:
-      context: ./../../
+      context: ./
       dockerfile: ./docker/callowayart/Dockerfile
       args:
         PORT: ${PORT}
