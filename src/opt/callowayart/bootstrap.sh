@@ -32,7 +32,14 @@ cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
   ) VALUES (
     NULL, '1000', 'wp_user_level', '10'
   );
+
+  UPDATE wp_options SET
+    option_value="https://${DOMAIN}"
+  WHERE
+    option_name="home" OR
+    option_name="siteurl"
 EOF
 
 rake -T
+rake replace_domain
 #rake migrate

@@ -1,6 +1,7 @@
 export PORT ?= 80
 export PROJECT ?= callowayart
 export REPOSITORY ?= callowaylc/$(PROJECT)
+export DOMAIN ?= migrated.callowayart.com
 
 SECRETS ?= s3://callowayart/secrets/migration
 ARTIFACT_WORDPRESS ?= s3://callowayart/artifacts/migration/wordpress.tgz

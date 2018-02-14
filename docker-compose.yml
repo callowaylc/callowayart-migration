@@ -17,6 +17,7 @@ services:
     environment:
       MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
       MIGRATION_AWS_SECRET_ACCESS_KEY: ${MIGRATION_AWS_SECRET_ACCESS_KEY}
+      DOMAIN: ${DOMAIN}
   db:
     image: mysql:5.7
     restart: always
