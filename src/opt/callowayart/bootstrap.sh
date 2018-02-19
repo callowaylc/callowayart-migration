@@ -41,5 +41,5 @@ cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
 EOF
 
 rake -T
-rake replace_domain
+rake replace_domain[migrated.callowayart.com]
 #rake migrate
