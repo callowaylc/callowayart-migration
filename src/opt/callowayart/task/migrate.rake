@@ -265,8 +265,8 @@ private def query database, sql
 
   begin
     result = @database[database].query sql
-  rescue => _
-    logs "failed query", query: sql
+  rescue => e
+    logs "failed query", query: sql, error: e
   end
   result.each unless result.nil?
 end
