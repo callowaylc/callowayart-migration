@@ -13,7 +13,7 @@ mysql -hdb -uroot -pwordpress -e"
 "
 
 mysql -hdb -uroot -pwordpress -Dcallowayart < ./callowayart.sql
-mysql -hdb -uroot -pwordpress -Dwordpress < ./migration.sql
+mysql -hdb -uroot -pwordpress -Dwordpress < ./wordpress.sql
 
 cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
   INSERT INTO wp_users (
@@ -42,4 +42,4 @@ EOF
 
 rake -T
 rake replace_domain[migrated.callowayart.com]
-#rake migrate
+rake migrate
