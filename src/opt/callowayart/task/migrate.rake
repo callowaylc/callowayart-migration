@@ -4,6 +4,7 @@
 
 desc "migrate to new callowayart"
 task :migrate do
+
   # get all works
   listings = [ ]
   posts    = query 'callowayart', %{

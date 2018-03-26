@@ -18,6 +18,7 @@ all:
 	@ aws s3 cp $(ARTIFACT_SQL) ./build
 	@ tar -xvzf ./build/wordpress.tgz -C ./build
 	@ tar -xvzf ./build/wordpress.sql.tgz -C ./build
+	@ cp -rf ./src/var/www/html/* ./build/wordpress/
 
 .PHONY: login
 login:
@@ -36,7 +37,7 @@ build:
       2>/dev/null > ./build/callowayart.sql
 
 	@ docker-compose build bootstrap
-	@ docker-compose run -d bootstrap
+	@ docker-compose run bootstrap
 	@ docker-compose build callowayart
 
 .PHONY: release
