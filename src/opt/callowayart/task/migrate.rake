@@ -18,6 +18,7 @@ task :migrate do
       wp.post_type   = "attachment" AND
       wp.post_status = "inherit"
     ORDER BY wp.post_modified DESC
+    LIMIT 50
   }
   counter = 0
 
@@ -277,7 +278,9 @@ private def artists listings
   artists = { }
 
   listings.each do | listing |
+
     if listing['artists']
+      info "examining listings artists"
       listing['artists'].each do | artist |
         slug = artist['slug']
         artists[slug] ||= {
@@ -392,7 +395,7 @@ private def insert_work artist, listing
             ON wptt.term_id = wpt.term_id
         WHERE
           wpt.slug = "#{ category['slug'] }" AND
-          wptt.taxonomy = "work-category"
+          wptt.taxonomy = "category"
       }
 
       logs 'category exists?', slug:category['slug'], exists: !exists.empty?
@@ -417,7 +420,7 @@ private def insert_work artist, listing
           INSERT INTO wp_term_taxonomy(
             term_id, taxonomy, description
           ) values (
-            #{ id }, 'work-category', 'desc'
+            #{ id }, 'category', 'desc'
           )
         }
 
@@ -427,7 +430,7 @@ private def insert_work artist, listing
       else
         query 'wordpress', %{
           update wp_term_taxonomy
-          set taxonomy = 'work-category'
+          set taxonomy = 'category'
           where term_taxonomy_id = #{ result.first['term_taxonomy_id'] }
         }
         term_taxonomy_id = result.first['term_taxonomy_id']
