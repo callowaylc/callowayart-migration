@@ -278,7 +278,6 @@ private def artists listings
   artists = { }
 
   listings.each do | listing |
-
     if listing['artists']
       info "examining listings artists"
       listing['artists'].each do | artist |
