@@ -6,5 +6,4 @@ EXPOSE ${PORT}
 
 COPY ./build/wordpress /var/www/html
 COPY ./src/var /var
-
-
+RUN chmod -R ugo+rw /var/www/html/wp-content

@@ -20,7 +20,7 @@ task :migrate do
       wp.post_type   = "attachment" AND
       wp.post_status = "inherit"
     ORDER BY wp.post_modified DESC
-    LIMIT 50
+    LIMIT 100
   }
   counter = 0
 
@@ -211,6 +211,8 @@ task :migrate do
           meta_key = '_thumbnail_id' AND
           post_id = #{ artist['id'] }
       }
+      logs "inserted thumbnail id", thumbnail: listing["thumbnail_id"]
+
     end
 
     # insert artist exhibits
@@ -311,11 +313,15 @@ private def insert_work artist, listing
 
   begin
     listing['thumbnail_id'] = wp_codex(`
-      ./bin/post #{ listing['uri'] }
+      ./bin/post '#{ listing['uri'] }'
     `)
+    listing['thumbnail_id'] = listing['thumbnail_id'].to_i
   rescue _
     listing['_thumbnail_id'] = 0
   end
+
+  logs "thumbnail id", uri: listing["uri"], thumbnail: listing["thumbnail_id"], grep: "add-thumbnail"
+
 
   # insert descriptive post
   query 'wordpress', %{
@@ -648,6 +654,8 @@ private def insert_artist artist
   )[0]['last_insert_id']
 
   {
+    last_name: artist["slug"].split("-").last,
+    _last_name: "field_59b06b1cf04ab",
     _edit_last: 1,
     _edit_lock: '1470716055:3',
     _thumbnail_id: 279,

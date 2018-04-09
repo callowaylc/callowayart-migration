@@ -6,7 +6,7 @@ require_once dirname(dirname(__FILE__)) . '/wp-admin/includes/image.php';
 
 $hash = uniqid();
 $uri = $argv[1];
-$file = "/tmp/migrate.$hash.jpg";
+$file = "/opt/callowayart/wp-content/uploads/migrated/migrate.$hash.jpg";
 
 file_put_contents($file, file_get_contents($uri));
 
