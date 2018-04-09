@@ -2,6 +2,8 @@
 # callowaylc@gmail.com
 # Migrates old callowayart to new database
 
+CONTEMPORARY_TERM_TAXONOMY_ID = 8
+
 desc "migrate to new callowayart"
 task :migrate do
 
@@ -279,13 +281,16 @@ private def artists listings
 
   listings.each do | listing |
     if listing['artists']
+      logs "looking at categories", listing: listing, grep: "looking-at-categories"
+
       listing['artists'].each do | artist |
         slug = artist['slug']
         artists[slug] ||= {
           'description' => artist['description'],
           'slug' => slug,
           'listings' => [ ],
-          'exhibits' => [ ]
+          'exhibits' => [ ],
+          'categories' => listing["categories"],
         }
         artists[slug]['listings'] << listing
 
@@ -302,7 +307,7 @@ private def artists listings
 end
 
 private def insert_work artist, listing
-  logs 'insert work', slug: listing['title']
+  logs 'insert work', slug: listing['title'], artist: artist
 
   begin
     listing['thumbnail_id'] = wp_codex(`
@@ -441,6 +446,26 @@ private def insert_work artist, listing
           #{ term_taxonomy_id }, #{ listing['id'] }
         )
       }
+
+      # check if artist has been inserted, and if not
+      # insert
+      result = query "wordpress", %{
+        SELECT 1
+        FROM wp_term_relationships
+        WHERE
+          term_taxonomy_id = #{ term_taxonomy_id } AND
+          object_id = #{ artist["id"] }
+      }
+
+      if result.empty?
+        query "wordpress", %{
+          INSERT INTO wp_term_relationships(
+            term_taxonomy_id, object_id
+          ) values (
+            #{ term_taxonomy_id }, #{ artist["id"] }
+          )
+        }
+      end
     end
 
     # finally, if category is backendonly, set post_status
@@ -449,6 +474,52 @@ private def insert_work artist, listing
       wp_codex(`
         ./bin/hide-post #{ listing['id'] }
       `)
+    end
+  end
+
+  # look for contemporary in categories; if the case
+  # we need to add listing and artist to contemporary
+  if listing["categories"].any? { | c | c["slug"] =~ /contemporary/i }
+
+    result = query "wordpress", %{
+      SELECT 1
+      FROM wp_term_relationships
+      WHERE
+        term_taxonomy_id = #{ CONTEMPORARY_TERM_TAXONOMY_ID } AND
+        object_id = #{ listing["id"] }
+    }
+    if result.empty?
+      logs "inserting listing into contemporary", grep: "inserting-listing-into-contemporary"
+
+      query "wordpress", %{
+        INSERT INTO wp_term_relationships(
+          term_taxonomy_id, object_id
+        ) values (
+          #{ CONTEMPORARY_TERM_TAXONOMY_ID }, #{ listing["id"] }
+        )
+      }
+    end
+
+    # check if artist has been inserted, and if not
+    # insert
+    result = query "wordpress", %{
+      SELECT 1
+      FROM wp_term_relationships
+      WHERE
+        term_taxonomy_id = #{ CONTEMPORARY_TERM_TAXONOMY_ID } AND
+        object_id = #{ artist["id"] }
+    }
+
+    if result.empty?
+      logs "inserting artist into contemporary", grep: "inserting-artist-into-contemporary"
+
+      query "wordpress", %{
+        INSERT INTO wp_term_relationships(
+          term_taxonomy_id, object_id
+        ) values (
+          #{ CONTEMPORARY_TERM_TAXONOMY_ID }, #{ artist["id"] }
+        )
+      }
     end
   end
 

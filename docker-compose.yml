@@ -12,7 +12,7 @@ services:
     image: bootstrap
     command: bash -c ./bootstrap.sh
     volumes:
-      - ./src/opt/callowayart/bootstrap.sh:/opt/callowayart/bootstrap.sh
+      - ./src/opt/callowayart/task/migrate.rake:/opt/callowayart/task/migrate.rake
     container_name: migration-bootstrap
     environment:
       MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
