@@ -32,7 +32,7 @@ task :migrate do
 
     begin
       raise :shit unless %x{
-        curl -I #{ listing['uri'] } -w '%{response_code}' -so /dev/null
+        curl -m5 -I #{ listing['uri'] } -w '%{response_code}' -so /dev/null
       } =~ /200/
 
     rescue
@@ -191,6 +191,7 @@ task :migrate do
   artists( listings ).each do | slug, artist |
     artist = insert_artist artist
     seen = { }
+    backend = true
 
     # insert artist listingss
     unless artist['listings'].empty?
@@ -198,6 +199,12 @@ task :migrate do
         seen[listing['title'].slugify] ||= begin
           listing = insert_work artist, listing
         end
+      end
+
+      if listing["categories"].none? { | c | c["slug"] =~ /backend/i }
+        wp_codex(`
+          ./bin/hide-post #{ artist['id'] }
+        `)
       end
 
       # set thumbnail id for artist
@@ -606,52 +613,65 @@ end
 private def insert_artist artist
   logs 'insert artist', slug: artist['slug'], description: artist['description'].to_ascii
 
-  query 'wordpress', %{
-    INSERT INTO
-      wp_posts(
-        post_author,
-        post_date,
-        post_date_gmt,
-        post_modified,
-        post_modified_gmt,
-        post_excerpt,
-        to_ping,
-        pinged,
-        post_content_filtered,
-        post_content,
-        post_title,
-        post_password,
-        post_name,
-        guid,
-        post_type
+  result = query "wordpress", %{
+    SELECT ID
+    FROM wp_posts
+    WHERE
+      post_type = 'artist' AND
+      post_name = '#{ artist["slug"] }'
 
-      ) values (
-        1,
-        now(),
-        now(),
-        now(),
-        now(),
-        '',
-        '',
-        '',
-        '',
-        '[et_pb_section admin_label="section"]
-         [et_pb_row admin_label="row"]
-         [et_pb_column type="4_4"]
-         [et_pb_text admin_label="Text"]
-          #{ sanitize artist['description'] }
-         [/et_pb_text][/et_pb_column][/et_pb_row][/et_pb_section]',
-        "#{ deslug artist['slug'] }",
-        "",
-        "#{ artist['slug'] }",
-        "#{ artist['slug'] }",
-        "artist"
-      )
   }
 
-  artist['id'] = (
-    query "wordpress", "select last_insert_id() as last_insert_id"
-  )[0]['last_insert_id']
+  if result
+    artist["id"] = result.first["ID"]
+  else
+    query 'wordpress', %{
+      INSERT INTO
+        wp_posts(
+          post_author,
+          post_date,
+          post_date_gmt,
+          post_modified,
+          post_modified_gmt,
+          post_excerpt,
+          to_ping,
+          pinged,
+          post_content_filtered,
+          post_content,
+          post_title,
+          post_password,
+          post_name,
+          guid,
+          post_type
+
+        ) values (
+          1,
+          now(),
+          now(),
+          now(),
+          now(),
+          '',
+          '',
+          '',
+          '',
+          '[et_pb_section admin_label="section"]
+           [et_pb_row admin_label="row"]
+           [et_pb_column type="4_4"]
+           [et_pb_text admin_label="Text"]
+            #{ sanitize artist['description'] }
+           [/et_pb_text][/et_pb_column][/et_pb_row][/et_pb_section]',
+          "#{ deslug artist['slug'] }",
+          "",
+          "#{ artist['slug'] }",
+          "#{ artist['slug'] }",
+          "artist"
+        )
+    }
+
+    artist['id'] = (
+      query "wordpress", "select last_insert_id() as last_insert_id"
+    )[0]['last_insert_id']
+  end
 
   {
     last_name: artist["slug"].split("-").last,

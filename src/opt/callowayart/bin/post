@@ -7,8 +7,13 @@ require_once dirname(dirname(__FILE__)) . '/wp-admin/includes/image.php';
 $hash = uniqid();
 $uri = $argv[1];
 $file = "/opt/callowayart/wp-content/uploads/migrated/migrate.$hash.jpg";
+$ctx = stream_context_create(array(
+  'http' => array(
+    'timeout' => 5
+  )
+));
 
-file_put_contents($file, file_get_contents($uri));
+file_put_contents($file, file_get_contents($uri, 0, $ctx));
 
 // Prepare an array of post data for the attachment.
 $attachment = array(
