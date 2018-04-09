@@ -37,11 +37,8 @@ build:
       2>/dev/null > ./build/callowayart.sql
 
 	@ docker-compose build bootstrap
-	@ docker-compose run bootstrap
-	#@ docker-compose build callowayart
-
-something:
-	docker-compose run --rm bootstrap bash
+	@ docker-compose run -d bootstrap
+	@ docker-compose build callowayart
 
 .PHONY: release
 release:
