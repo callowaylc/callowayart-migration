@@ -20,7 +20,7 @@ task :migrate do
       wp.post_type   = "attachment" AND
       wp.post_status = "inherit"
     ORDER BY wp.post_modified DESC
-    LIMIT 100
+    LIMIT 500
   }
   counter = 0
 
