@@ -201,7 +201,7 @@ task :migrate do
         end
       end
 
-      if artist["categories"].none? { | c | c["slug"] =~ /backend/i }
+      unless artist["categories"].none? { | c | c["slug"] =~ /backend/i }
         wp_codex(`
           ./bin/hide-post #{ artist['id'] }
         `)
