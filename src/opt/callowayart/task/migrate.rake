@@ -201,7 +201,7 @@ task :migrate do
         end
       end
 
-      if listing["categories"].none? { | c | c["slug"] =~ /backend/i }
+      if artist["categories"].none? { | c | c["slug"] =~ /backend/i }
         wp_codex(`
           ./bin/hide-post #{ artist['id'] }
         `)
@@ -619,10 +619,9 @@ private def insert_artist artist
     WHERE
       post_type = 'artist' AND
       post_name = '#{ artist["slug"] }'
-
   }
 
-  if result
+  unless result.empty?
     artist["id"] = result.first["ID"]
   else
     query 'wordpress', %{
