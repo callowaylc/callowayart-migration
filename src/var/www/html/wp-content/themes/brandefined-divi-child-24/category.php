@@ -26,9 +26,13 @@
 						if ( $query->have_posts() ) :
 							while ( $query->have_posts() ) :
 								$query->the_post();
+								if (preg_match("/^private/i", the_title())) {
+									continue;
+								}
 								$image = get_the_post_thumbnail($post_id, 'thumbnail');
 						?>
-								<div class="bd-col col-1-4">
+
+								<div class="bd-col col-1-4" style="width:80px; height:80px">
 									<?php echo $image; ?>
 									<a href="<?php the_permalink($post_id); ?>">
 										<span><?php echo the_title(); ?></span>

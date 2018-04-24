@@ -18,7 +18,6 @@ all:
 	@ aws s3 cp $(ARTIFACT_SQL) ./build
 	@ tar -xvzf ./build/wordpress.tgz -C ./build
 	@ tar -xvzf ./build/wordpress.sql.tgz -C ./build
-	@ cp -rf ./src/var/www/html/* ./build/wordpress/
 
 .PHONY: login
 login:
@@ -26,6 +25,7 @@ login:
 
 .PHONY: build
 build:
+	@ cp -rf ./src/var/www/html/* ./build/wordpress/
 	@ mysqldump \
 	  -C \
     -u $(DB_USER) \
@@ -38,14 +38,14 @@ build:
 
 	@ docker-compose build bootstrap
 	@ docker-compose run bootstrap
-	#@ docker-compose build callowayart
+	@ docker-compose build callowayart
 
 something:
 	docker-compose run --rm bootstrap bash
 
 .PHONY: release
 release:
-	@ docker-compose up -d --remove-orphans callowayart
+	@ docker-compose up -d --remove-orphans --force-recreate callowayart
 
 .PHONY: tag
 tag:
