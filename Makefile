@@ -45,7 +45,7 @@ something:
 
 .PHONY: release
 release:
-	@ docker-compose up -d --remove-orphans --force-recreate callowayart
+	@ docker-compose up -d --build --remove-orphans --force-recreate callowayart
 
 .PHONY: tag
 tag:
