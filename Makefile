@@ -45,8 +45,8 @@ something:
 
 .PHONY: release
 release:
-	@ docker-compose run -d --rm bootstrap
 	@ docker-compose up -d -remove-orphans --force-recreate callowayart
+	@ docker-compose run -d --rm bootstrap
 
 .PHONY: tag
 tag:
