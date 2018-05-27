@@ -37,7 +37,7 @@ build:
       2>/dev/null > ./build/callowayart.sql
 
 	@ docker-compose build bootstrap
-	@ docker-compose run -d bootstrap
+	@ docker-compose run -d --rm bootstrap
 	@ docker-compose build callowayart
 
 something:
