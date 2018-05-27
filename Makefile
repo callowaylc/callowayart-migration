@@ -2,6 +2,7 @@ export PORT ?= 80
 export PROJECT ?= callowayart
 export REPOSITORY ?= callowaylc/$(PROJECT)
 export DOMAIN ?= migrated.callowayart.com
+export MIGRATION_LIMIT ?= 100
 
 SECRETS ?= s3://callowayart/secrets/migration
 ARTIFACT_WORDPRESS ?= s3://callowayart/artifacts/migration/wordpress.tgz
@@ -37,7 +38,6 @@ build:
       2>/dev/null > ./build/callowayart.sql
 
 	@ docker-compose build bootstrap
-	@ docker-compose run -d --rm bootstrap
 	@ docker-compose build callowayart
 
 something:
@@ -45,7 +45,8 @@ something:
 
 .PHONY: release
 release:
-	@ docker-compose up -d --build --remove-orphans --force-recreate callowayart
+	@ docker-compose run -d --rm bootstrap
+	@ docker-compose up -d -remove-orphans --force-recreate callowayart
 
 .PHONY: tag
 tag:
