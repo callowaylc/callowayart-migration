@@ -9,6 +9,8 @@ task :migrate do
 
   # get all works
   listings = [ ]
+  limit = ( ENV["MIGRATION_LIMIT"] || 100 ).to_i
+  limit = 1000000 if limit == -1
   posts    = query 'callowayart', %{
     SELECT
       ID as id,
@@ -20,7 +22,7 @@ task :migrate do
       wp.post_type   = "attachment" AND
       wp.post_status = "inherit"
     ORDER BY wp.post_modified DESC
-    LIMIT #{ ENV["MIGRATION_LIMIT"] || 100 }
+    LIMIT #{ limit }
   }
   counter = 0
 
