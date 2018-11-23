@@ -104,7 +104,7 @@ task :migrate do
           listing['artists'] ||= [ ]
           listing['artists'] << {
             'slug' => term['slug'],
-            'description' => tax['description']
+            'description' => clean_description(tax['description']),
           }
         end
 
@@ -122,7 +122,7 @@ task :migrate do
           listing['exhibits'] ||= [ ]
           listing['exhibits'] << {
             'slug' => term['slug'],
-            'description' => tax['description']
+            'description' => clean_description(tax['description']),
           }
         end
       end
@@ -755,6 +755,16 @@ def wp_codex( result )
   rescue
     0
   end
+end
+
+private def clean_description(text)
+  logs "Enter", trace: "migrate#clean_description", text: text
+
+  # remove metadata in the form of @key=value
+  retval = text.gsub(/\@.+?\=.+?(\s|$)/, "").to_s
+
+  logs "Exit", trace: "migrate#clean_description", returns: retval
+  retval
 end
 
 
