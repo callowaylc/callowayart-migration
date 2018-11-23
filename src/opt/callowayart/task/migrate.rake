@@ -3,6 +3,10 @@
 # Migrates old callowayart to new database
 
 CONTEMPORARY_TERM_TAXONOMY_ID = 8
+EXHIBIT_CURRENT_TERMTAX_ID = 4
+EXHIBIT_PAST_TERMTAX_ID = 5
+EXHIBIT_UPCOMINGTAX_TERM_ID = 6
+
 
 desc "migrate to new callowayart"
 task :migrate do
@@ -610,6 +614,22 @@ private def insert_exhibit artist, listing, exhibit
       )
     }
   end
+
+  # insert into wp_terms, wp_term_taxonomy
+  query "wordpress", %{
+    INSERT INTO
+      wp_term_relationships (
+        object_id, term_taxonomy_id
+      )
+      values (
+        #{ exhibit['id'] }, #{ EXHIBIT_PAST_TERMTAX_ID }
+      )
+  }
+  term_id = (
+    query "wordpress", "select last_insert_id() as last_insert_id"
+  )[0]['last_insert_id']
+
+
 end
 
 private def insert_artist artist
