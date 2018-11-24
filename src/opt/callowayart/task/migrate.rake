@@ -35,6 +35,7 @@ task :migrate do
     listing['artists'] = [ ]
     listing['exhibits'] = [ ]
     listing['categories'] = [ ]
+    listing['content'] = clean_description(listing['content'])
 
     begin
       raise :shit unless %x{
@@ -301,7 +302,7 @@ private def artists listings
       listing['artists'].each do | artist |
         slug = artist['slug']
         artists[slug] ||= {
-          'description' => artist['description'],
+          'description' => clean_description(artist['description']),
           'slug' => slug,
           'listings' => [ ],
           'exhibits' => [ ],
@@ -675,12 +676,7 @@ private def insert_artist artist
           '',
           '',
           '',
-          '[et_pb_section admin_label="section"]
-           [et_pb_row admin_label="row"]
-           [et_pb_column type="4_4"]
-           [et_pb_text admin_label="Text"]
-            #{ sanitize artist['description'] }
-           [/et_pb_text][/et_pb_column][/et_pb_row][/et_pb_section]',
+          '#{ sanitize artist['description'] }',
           "#{ deslug artist['slug'] }",
           "",
           "#{ artist['slug'] }",
@@ -721,10 +717,8 @@ private def insert_artist artist
     _et_pb_post_hide_nav: 'default',
     _et_pb_page_layout: 'et_full_width_page',
     _et_pb_side_nav: 'off',
-    _et_pb_use_builder: 'on',
-    _et_pb_old_content: "
-      <div class=\"side-description\">#{ sanitize artist['description'] }</div>
-    "
+    _et_pb_use_builder: 'off',
+    _et_pb_old_content: sanitize(artist['description']),
 
   }.each do | field, value |
     query "wordpress", %{
@@ -761,7 +755,10 @@ private def clean_description(text)
   logs "Enter", trace: "migrate#clean_description", text: text
 
   # remove metadata in the form of @key=value
-  retval = text.gsub(/\@.+?\=.+?(\s|$)/, "").to_s
+  retval = text.gsub(/\@.+?\=.+?(\s|$)/, "")
+
+  # remove tags
+  retval = retval.gsub(/<\/?[^>]+>/, "")
 
   logs "Exit", trace: "migrate#clean_description", returns: retval
   retval

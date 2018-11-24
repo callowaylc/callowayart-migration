@@ -47,6 +47,7 @@ release:
 
 bootstrap:
 	- docker rm -f bootstrap
+	docker-compose build bootstrap
 	docker-compose run -d --rm --name bootstrap bootstrap
 
 tag:
