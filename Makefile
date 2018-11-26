@@ -40,8 +40,9 @@ build:
 	docker-compose build callowayart
 
 release:
-	@ docker-compose up -d --remove-orphans --force-recreate callowayart
-	@- docker-compose run -d --rm --name bootstrap bootstrap
+	- docker rm -f bootstrap
+	docker-compose up -d --remove-orphans --force-recreate callowayart
+	- docker-compose run -d --rm --name bootstrap bootstrap
 
 	docker-compose exec callowayart bash -c "chmod -R ugo+rwx /var/www/html/wp-content"
 
