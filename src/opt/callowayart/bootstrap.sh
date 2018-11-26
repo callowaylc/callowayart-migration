@@ -10,10 +10,21 @@ mysql -hdb -uroot -pwordpress -e"
 
   CREATE DATABASE wordpress;
   CREATE DATABASE callowayart;
+
+  ALTER DATABASE wordpress CHARACTER SET utf8;
 "
 
-mysql -hdb -uroot -pwordpress -Dcallowayart < ./callowayart.sql
-mysql -hdb -uroot -pwordpress -Dwordpress < ./wordpress.sql
+cat ./callowayart.sql | mysql -hdb -uroot -pwordpress -Dcallowayart
+cat ./wordpress.sql | mysql -hdb -uroot -pwordpress -Dwordpress
+
+mysql -hdb -uroot -pwordpress -Dcallowayart -e"
+  UPDATE wp_term_taxonomy SET description=CONVERT(CONVERT(description USING binary) USING utf8);
+  UPDATE wp_posts SET post_content=CONVERT(CONVERT(post_content USING binary) USING utf8);
+
+  ALTER DATABASE callowayart CHARACTER SET utf8 COLLATE utf8_bin;
+  ALTER TABLE wp_term_taxonomy CONVERT TO CHARACTER SET utf8 COLLATE utf8_bin;
+
+"
 
 cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
   INSERT INTO wp_users (
@@ -43,3 +54,4 @@ EOF
 rake -T
 rake replace_domain[migrated.callowayart.com]
 rake migrate
+
