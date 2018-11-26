@@ -1,12 +1,10 @@
 #!/usr/bin/env ruby
 # callowaylc@gmail.com
 # Migrates old callowayart to new database
-
 CONTEMPORARY_TERM_TAXONOMY_ID = 8
 EXHIBIT_CURRENT_TERMTAX_ID = 4
 EXHIBIT_PAST_TERMTAX_ID = 5
 EXHIBIT_UPCOMINGTAX_TERM_ID = 6
-
 
 desc "migrate to new callowayart"
 task :migrate do
@@ -35,7 +33,7 @@ task :migrate do
     listing['artists'] = [ ]
     listing['exhibits'] = [ ]
     listing['categories'] = [ ]
-    listing['content'] = clean_description(listing['content'])
+    listing['content'] = sanitize(listing['content'])
 
     begin
       raise :shit unless %x{
@@ -105,7 +103,7 @@ task :migrate do
           listing['artists'] ||= [ ]
           listing['artists'] << {
             'slug' => term['slug'],
-            'description' => clean_description(tax['description']),
+            'description' => sanitize(tax['description']),
           }
         end
 
@@ -123,7 +121,7 @@ task :migrate do
           listing['exhibits'] ||= [ ]
           listing['exhibits'] << {
             'slug' => term['slug'],
-            'description' => clean_description(tax['description']),
+            'description' => sanitize(tax['description']),
           }
         end
       end
@@ -248,25 +246,25 @@ task :migrate do
   end
 
   # dump migration database, convert to utf8, and reimport
-  logs "force utf8 conversion and reimport"
-  command %{
-    export MYSQL_PWD=wordpress
-    mysqldump \
-      -hdb \
-      -uroot \
-      --opt \
-      --skip-set-charset \
-      --default-character-set=latin1 \
-      --skip-extended-insert \
-        wordpress > /tmp/database.sql
+  #logs "force utf8 conversion and reimport"
+  #command %{
+  #  export MYSQL_PWD=wordpress
+  #  mysqldump \
+  #    -hdb \
+  #    -uroot \
+  #    --opt \
+  #    --skip-set-charset \
+  #    --default-character-set=latin1 \
+  #    --skip-extended-insert \
+  #      wordpress > /tmp/database.sql
 
-    sed -i s/latin1/utf8/gI /tmp/database.sql
+  #  sed -i s/latin1/utf8/gI /tmp/database.sql
     #cat /tmp/database.sql | mysql \
     #  -h10.0.0.177 \
     #  -uroot \
     #  -Dwordpress
     #rm /tmp/database.sql
-  }
+  #}
 end
 
 
@@ -302,12 +300,13 @@ private def artists listings
       listing['artists'].each do | artist |
         slug = artist['slug']
         artists[slug] ||= {
-          'description' => clean_description(artist['description']),
+          'description' => sanitize(artist['description']),
           'slug' => slug,
           'listings' => [ ],
           'exhibits' => [ ],
           'categories' => listing["categories"],
         }
+        logs "artist-description", description: artist["description"], sanitized: sanitize(artist['description'])
         artists[slug]['listings'] << listing
 
         if listing['exhibits']
@@ -547,8 +546,7 @@ private def insert_work artist, listing
 end
 
 private def sanitize value
-  value = value.gsub /'/, ""
-  value.to_ascii
+  value.gsub(/\@.+?\=.+?(\s|$)/, "")
 end
 
 private def insert_exhibit artist, listing, exhibit
@@ -753,6 +751,8 @@ end
 
 private def clean_description(text)
   logs "Enter", trace: "migrate#clean_description", text: text
+
+  retval = sanitize text
 
   # remove metadata in the form of @key=value
   retval = text.gsub(/\@.+?\=.+?(\s|$)/, "")
