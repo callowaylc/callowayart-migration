@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 
 while ! nc -z db 3306; do
   sleep 0.1 # wait for 1/10 of the second before check again
@@ -17,13 +18,24 @@ mysql -hdb -uroot -pwordpress -e"
 cat ./callowayart.sql | mysql -hdb -uroot -pwordpress -Dcallowayart
 cat ./wordpress.sql | mysql -hdb -uroot -pwordpress -Dwordpress
 
+# fix encoding issues
 mysql -hdb -uroot -pwordpress -Dcallowayart -e"
   UPDATE wp_term_taxonomy SET description=CONVERT(CONVERT(description USING binary) USING utf8);
   UPDATE wp_posts SET post_content=CONVERT(CONVERT(post_content USING binary) USING utf8);
 
   ALTER DATABASE callowayart CHARACTER SET utf8 COLLATE utf8_bin;
   ALTER TABLE wp_term_taxonomy CONVERT TO CHARACTER SET utf8 COLLATE utf8_bin;
+"
 
+mysql -hdb -uroot -pwordpress -Dwordpress -e"
+  UPDATE wp_posts
+    SET post_content = REPLACE(
+      post_content, 'http://localhost/', '/'
+    );
+  UPDATE wp_posts
+    SET post_content = REPLACE(
+      post_content, 'http://dev.brandefined.net/wdp-103964-susan-calloway/', '/'
+    );
 "
 
 cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
