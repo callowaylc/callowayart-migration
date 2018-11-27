@@ -1,0 +1,4 @@
+*
+!src/opt
+!build/*.sql
+!build/wordpress

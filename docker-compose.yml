@@ -4,6 +4,7 @@ volumes:
   migrated:
 
 services:
+
   bootstrap:
     depends_on:
       - db
@@ -12,18 +13,19 @@ services:
     build:
       context: ./
       dockerfile: ./docker/bootstrap/Dockerfile
-    image: bootstrap
+    image: bootstrap:latest
+    container_name: bootstrap
     command: bash -c ./bootstrap.sh
     volumes:
       - ./src/opt/callowayart/bin/post:/opt/callowayart/bin/post
       - ./src/opt/callowayart/task/migrate.rake:/opt/callowayart/task/migrate.rake
       - migrated:/opt/callowayart/wp-content/uploads/migrated
-    container_name: bootstrap
     environment:
       MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
       MIGRATION_AWS_SECRET_ACCESS_KEY: ${MIGRATION_AWS_SECRET_ACCESS_KEY}
       DOMAIN: ${DOMAIN}
       MIGRATION_LIMIT: ${MIGRATION_LIMIT}
+
   db:
     image: mysql:5.7
     restart: always
@@ -36,19 +38,37 @@ services:
       - 3306:3306
     volumes:
       - ./src/etc/mysql/conf.d/general.cnf:/etc/mysql/conf.d/general.cnf:ro
-    container_name: migration-db
-  callowayart:
-    image: ${REPOSITORY}
-    depends_on:
-      - db
+    container_name: db
+
+  varnish:
+    image: ${ORG}/varnish:${SHA}
+    links:
+      - wordpress
     ports:
       - ${PORT}:${PORT}
     restart: always
     build:
-      context: ./
-      dockerfile: ./docker/callowayart/Dockerfile
+      context: .
+      dockerfile: ./docker/varnish/Dockerfile
       args:
         PORT: ${PORT}
+    environment:
+      VARNISH_MEMORY: 256M
+    container_name: varnish
+
+  wordpress:
+    image: ${ORG}/wordpress:${SHA}
+    depends_on:
+      - db
+    ports:
+      - ${PORT}
+    restart: always
+    build:
+      context: ./
+      dockerfile: ./docker/wordpress/Dockerfile
+      args:
+        PORT: ${PORT}
+    command: /opt/callowayart/start.sh "apache2-foreground"
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
@@ -58,4 +78,4 @@ services:
     volumes:
       - migrated:/var/www/html/wp-content/uploads/migrated
       - ./build/wordpress/wp-content:/var/www/html/wp-content:rw
-    container_name: callowayart
+    container_name: wordpress
