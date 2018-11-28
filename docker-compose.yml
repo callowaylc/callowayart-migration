@@ -68,7 +68,7 @@ services:
       dockerfile: ./docker/wordpress/Dockerfile
       args:
         PORT: ${PORT}
-    command: /opt/callowayart/start.sh "apache2-foreground"
+    command: /opt/callowayart/start.sh
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress

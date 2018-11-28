@@ -13,7 +13,7 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
 -include .secrets
 
-.PHONY: all build login release tag publish clean deploy
+.PHONY: all build login release tag publish clean deploy orchestrate
 all:
 	@ rm -rf ./build && mkdir -p ./build
 	@ aws s3 cp $(SECRETS) ./.secrets
@@ -55,6 +55,8 @@ release:
 	- docker rm -f bootstrap
 	docker-compose up -d --remove-orphans --force-recreate varnish
 	docker-compose run -d --rm bootstrap
+
+orchestrate: clean build release
 
 bootstrap:
 	- docker rm -f bootstrap

@@ -2,4 +2,6 @@
 set -euo pipefail
 
 chmod -R ugo+rwx /var/www/html/wp-content
-docker-entrypoint.sh $@
+a2enmod  headers
+
+docker-entrypoint.sh "apache2-foreground"

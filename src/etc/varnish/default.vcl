@@ -139,7 +139,7 @@ sub vcl_recv {
   }
 
   # User is logged in. Pass to backend.
-  if (req.http.cookie ~ "wordpress_logged_in_") {
+  if (req.url ~ "^(wp-)?admin") {
     return(pass);
   }
 
@@ -291,7 +291,7 @@ sub vcl_backend_response {
 
   # Cache HTML for 1s as default if no expires header is set or if less than 0
   if (beresp.ttl <= 0s && beresp.http.content-type ~ "text/html") {
-    set beresp.ttl = 10s;
+    set beresp.ttl = 1s;
   }
 
   # Keep object in cache for 1w beyond the ttl to serve stale content (e.g. to the thundering herd or if the backend goes down)
