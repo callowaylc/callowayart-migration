@@ -1,4 +1,6 @@
 # BEGIN WordPress
+Header set Cache-Control "max-age=60, public"
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /

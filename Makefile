@@ -1,8 +1,10 @@
 export PORT ?= 80
+export ORG ?= callowayart
 export PROJECT ?= callowayart
 export REPOSITORY ?= callowaylc/$(PROJECT)
 export DOMAIN ?= migrated.callowayart.com
 export MIGRATION_LIMIT ?= 50
+export SHA := $(shell git rev-parse --short HEAD)
 
 SECRETS ?= s3://callowayart/secrets/migration
 ARTIFACT_WORDPRESS ?= s3://callowayart/artifacts/migration/wordpress.tgz
@@ -11,7 +13,7 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
 -include .secrets
 
-.PHONY: all build login release tag publish clean deploy
+.PHONY: all build login release tag publish clean deploy orchestrate
 all:
 	@ rm -rf ./build && mkdir -p ./build
 	@ aws s3 cp $(SECRETS) ./.secrets
@@ -20,12 +22,7 @@ all:
 	@ tar -xvzf ./build/wordpress.tgz -C ./build
 	@ tar -xvzf ./build/wordpress.sql.tgz -C ./build
 
-login:
-	docker login -u$(DOCKER_USERNAME) -p$(DOCKER_PASSWORD)
-
-build:
-	cp -rf ./src/var/www/html/* ./build/wordpress/
-	mysqldump \
+	@ mysqldump \
 	  -C \
     -u $(DB_USER) \
     -h $(DB_HOST) \
@@ -36,15 +33,30 @@ build:
     		wordpress_callowayart \
       		> ./build/callowayart.sql
 
+login:
+	@ echo $(DOCKER_PASSWORD) | docker login -u$(DOCKER_USERNAME) --password-stdin
+
+build:
+	cp -rf ./src/var/www/html/* ./build/wordpress/
+
+	- cp ./docker/bootstrap/.dockerignore .
 	docker-compose build bootstrap
-	docker-compose build callowayart
+
+	- cp ./docker/varnish/.dockerignore .
+	docker-compose build varnish
+
+	- cp ./docker/wordpress/.dockerignore .
+	docker-compose build wordpress
+
+push:
+	docker-compose push varnish wordpress
 
 release:
 	- docker rm -f bootstrap
-	docker-compose up -d --remove-orphans --force-recreate callowayart
-	- docker-compose run -d --rm --name bootstrap bootstrap
+	docker-compose up -d --remove-orphans --force-recreate varnish
+	docker-compose run -d --rm bootstrap
 
-	docker-compose exec callowayart bash -c "chmod -R ugo+rwx /var/www/html/wp-content"
+orchestrate: clean build release
 
 bootstrap:
 	- docker rm -f bootstrap
