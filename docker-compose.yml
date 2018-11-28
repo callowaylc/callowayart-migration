@@ -40,6 +40,16 @@ services:
       - ./src/etc/mysql/conf.d/general.cnf:/etc/mysql/conf.d/general.cnf:ro
     container_name: db
 
+  exporter:
+    image: ${ORG}/exporter:${SHA}
+    restart: always
+    environment:
+      DB_PASSWORD: wordpress
+      DB_USER: wordpress
+    ports:
+      - 8888
+    container_name: exporter
+
   varnish:
     image: ${ORG}/varnish:${SHA}
     links:
