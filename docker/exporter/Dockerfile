@@ -13,7 +13,7 @@ EXPOSE ${PORT}
 CMD wordpress_exporter \
     -host=db \
     -port=3306 \
-    -user=${DB_USER} \
+    -user=${WORDPRESS_DB_USER} \
     -db=wordpress \
     -tableprefix=wp_ \
-    -pass=${DB_PASS}
+    -pass=${WORDPRESS_DB_PASS}

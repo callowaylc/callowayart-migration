@@ -11,7 +11,7 @@ services:
     links:
       - db
     build:
-      context: ./
+      context: .
       dockerfile: ./docker/bootstrap/Dockerfile
     image: bootstrap:latest
     container_name: bootstrap
@@ -30,10 +30,10 @@ services:
     image: mysql:5.7
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: wordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: ${WORDPRESS_DB_PASS}
+      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
+      MYSQL_USER: ${WORDPRESS_DB_USER}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASS}
     ports:
       - 3306:3306
     volumes:
@@ -43,9 +43,12 @@ services:
   exporter:
     image: ${ORG}/exporter:${SHA}
     restart: always
+    build:
+      context: .
+      dockerfile: ./docker/exporter/Dockerfile
     environment:
-      DB_PASSWORD: wordpress
-      DB_USER: wordpress
+      WORDPRESS_DB_PASS: ${WORDPRESS_DB_PASS}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
     ports:
       - 8888
     container_name: exporter
@@ -74,15 +77,15 @@ services:
       - ${PORT}
     restart: always
     build:
-      context: ./
+      context: .
       dockerfile: ./docker/wordpress/Dockerfile
       args:
         PORT: ${PORT}
     command: /opt/callowayart/start.sh
     environment:
       WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASS}
       MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
       MIGRATION_AWS_SECRET_ACCESS_KEY: ${MIGRATION_AWS_SECRET_ACCESS_KEY}
     volumes:
