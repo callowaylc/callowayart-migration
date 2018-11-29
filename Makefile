@@ -55,7 +55,9 @@ push:
 	docker-compose push varnish wordpress exporter
 
 release:
-	docker-compose --verbose up -d --remove-orphans --force-recreate exporter
+	docker-compose up -d --remove-orphans --force-recreate varnish
+	docker-compose run -d --rm bootstrap
+	docker-compose up  -d --remove-orphans --force-recreate exporter
 
 orchestrate: clean build release
 

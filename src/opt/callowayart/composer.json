@@ -1,0 +1,6 @@
+{
+  "require": {
+    "monolog/monolog": "1.0.*",
+    "jimdo/prometheus_client_php": "v0.9.1"
+  }
+}
