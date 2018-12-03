@@ -3,6 +3,7 @@ ARG HOME=/var/www/html
 ARG WORKDIR=/opt/callowayart
 ARG PORT=80
 ENV PORT=${PORT}
+ENV WORKDIR=${WORKDIR}
 
 WORKDIR $WORKDIR
 LABEL application=callowayart
@@ -20,4 +21,6 @@ COPY ./src/var /var
 COPY ./src/opt/callowayart ${WORKDIR}
 
 RUN true && \
-    php composer.phar install --working-dir=${WORKDIR}
+    php composer.phar install
+
+WORKDIR $HOME
