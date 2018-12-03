@@ -61,7 +61,7 @@ services:
     depends_on:
       - db
     ports:
-      - ${PORT}
+      - 8080:${PORT}
     restart: always
     build:
       context: ./

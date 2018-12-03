@@ -52,7 +52,6 @@ push:
 	docker-compose push varnish wordpress
 
 release:
-	- docker rm -f bootstrap
 	docker-compose up -d --remove-orphans --force-recreate varnish
 	docker-compose run -d --rm bootstrap
 

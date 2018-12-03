@@ -313,6 +313,7 @@ sub vcl_deliver {
   unset resp.http.Server;
   unset resp.http.Via;
   unset resp.http.X-Varnish;
+  set resp.http.Cache-Control = "no-cache";
 
   return(deliver);
 }

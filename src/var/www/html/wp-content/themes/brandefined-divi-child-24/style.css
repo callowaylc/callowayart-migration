@@ -1,0 +1,605 @@
+/*
+    Theme Name:     Brandefined - Child Theme
+    Theme URI:      http://dev.brandefined.net/site/wp-content/themes/brandefined-divi-child-24
+    Description:    Brandefined Child Theme
+    Author:         Brandefined
+    Author URI:     http://www.brandefined.com
+    Template:       Divi
+    Version:        1.1.0
+*/
+
+/**********[ CSS @imports ]**********/
+@import 'css/grid.css';
+@import 'css/res.css';
+
+* > a:hover {
+    cursor: pointer !important;
+}
+small { font-size: 12px; color: #777; }
+h1,h2,h3,
+.works-row .pagination,
+#work-single .pagination a {
+    font-family: "Sorts Mill Goudy";
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding: 0;
+    line-height: 1.25em;
+}
+#service-boxes h3 {
+    position: relative;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+}
+#service-boxes h3:after {
+    content: " ";
+    position: absolute;
+    height: 1px;
+    width: 75px;
+    bottom: 0px;
+    left: 50%;
+    background: rgba(0,0,0,0.15);
+    transform: translateX(-50%);
+}
+.robly_tab_position_br {
+    position: fixed;
+    bottom: 0px;
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+}
+h1 {
+    font-size: 34px;
+    color: #555;
+}
+.main-heading {
+    font-size: 36px;
+    color: #555;
+}
+h1.main-heading {
+    margin-bottom: 0;
+}
+h2 {
+    margin-bottom: 0;
+}
+h2.main-heading {
+    color: #555;
+    font-size: 2em;
+}
+h3.main-heading {
+    color: #777;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+h2#subtitle {
+    color: #777;
+}
+h3.more-by {
+    color: #777;
+    border-bottom: 1px dotted #ccc;
+    margin-top: 50px;
+}
+h3.the-date {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 1.25em;
+}
+h4 {
+    padding-bottom: 0;
+}
+h5 {
+    font-family: "Sorts Mill Goudy";
+}
+hr {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 1px dotted #ccc;
+    margin: 30px 0 50px 0;
+    clear: both;
+}
+sup {
+    position: relative;
+    vertical-align: baseline;
+    top: -4px;
+    font-size: 12px;
+}
+#main-content {
+    padding: 50px 0px;
+}
+#main-content .container {
+    padding: 0px !important;
+}
+.home-page-mobile-image {
+    position: relative;
+}
+.home-page-mobile-overlay {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.85);
+    transition: opacity .4s ease;
+}
+.home-page-mobile-link:hover .home-page-mobile-overlay {
+    opacity: 1;
+}
+.home-page-mobile-overlay div {
+    display: block;
+    color: #fff;
+    font-size: 1.5vmax;
+}
+.home-page-mobile-overlay div.title {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-right: 10px;
+}
+.exhibitions h2.main-heading {
+    margin-bottom: 20px;
+}
+.exhibitions h5 {
+    text-transform: uppercase;
+    font-size: 18px
+    color: #555;
+}
+.exhibitions .bd-row {
+    margin-bottom: 0
+}
+#current-exhibition {
+    padding: 50px;
+    background: #eee url(images/paintbg.jpg) no-repeat center center;
+    margin-bottom: 50px;
+    border: 3px double #fff;
+    background-size: cover;
+}
+.archive-past-exhibitions {
+    text-align: center;
+    padding: 0;
+}
+.archive-past-exhibitions .past-exhibition-title {
+    color: #555;
+    font-family: "Sorts Mill Goudy";
+    font-size: 16px;
+}
+.archive-past-exhibitions .past-exhibition-artist {
+    color: #999;
+}
+.upcoming-exhibitions .inner:nth-child(even) .col-1-4 {
+    float: right;
+}
+.upcoming-exhibitions .inner:nth-child(even) .bd-col.col-3-4 .info {
+    padding-left: 0;
+    padding-right: 25px;
+}
+.archive-past-exhibitions > a div {
+    transition: color .3s ease
+}
+.archive-past-exhibitions:hover > a div {
+    color: #333 !important;
+}
+p.description {
+    text-align: justify;
+    margin-bottom: 15px;
+}
+.et_pb_row {
+    padding: 0px !important;
+    width: 100%;
+}
+.button {
+    display: inline-block;
+    padding: 15px 20px;
+    color: #fff;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: .2s;
+    transform: translateZ(0);
+}
+.button:hover {
+    opacity: .85;
+}
+.hollow-black-btn {
+    position: relative;
+    box-shadow: inset 0px 0px 0px 3px rgba(0,0,0,.75);
+    background: transparent;
+    overflow: hidden;
+    color: rgba(0,0,0,.75);
+}
+.hollow-black-btn:hover {
+    color: rgba(255,255,255,1);
+}
+.hollow-black-btn:after {
+    position: absolute;
+    content: "";
+    border-radius: 100%;
+    height: 0px;
+    width: 0px;
+    background: rgba(0,0,0,0);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: .2s ease-in-out;
+    z-index: -1;
+}
+.hollow-black-btn:hover:after {
+    background: rgba(0,0,0,1);
+    width: 300px;
+    height: 300px;
+}
+.button:active {
+    position: relative;
+    top: 2px;
+}
+.black-btn {
+    background: #000 !important;
+}
+.bd-col img, .bd-flex-grid img {
+    margin-bottom: 0px;
+    border: 5px solid #fff;
+    transition: all .25s;
+    width: 100%;
+    transform: translateZ(0);
+}
+a .bd-col:hover > img,
+a .bd-col:active > img,
+.bd-flex-grid img:hover,
+.bd-flex-grid img:active {
+    border-color: #000;
+}
+.container { width: auto; max-width: 1070px; }
+.container::before {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+.entry-content > .et_pb_section:first-of-type {
+    padding-top: 0px !important;
+}
+.entry-content ul {
+    padding: 0px 0px 25px 20px;
+}
+.et_pb_section {
+    padding-bottom: 0px;
+}
+#et-top-navigation {
+    border-top: double 3px #ccc !important;
+    border-bottom: double 3px #ccc !important;
+}
+#et-top-navigation .et_header_style_centered #top-menu > li > a {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.et_mobile_menu li:last-child > a {
+    border: none !important;
+}
+.et_header_style_centered .et-search-form input, .et_header_style_centered span.et_close_search_field {
+    top: 68% !important;
+}
+#main-header {
+    -webkit-box-shadow:none
+    -moz-box-shadow:none  !important;
+    box-shadow:none  !important;
+    z-index: 1 !important;
+}
+ul.mainul {
+    cursor: pointer  !important;
+}
+#top-menu li > a {
+    font-weight: 400 !important;
+    text-transform: uppercase !important;
+}
+#top-menu li.current-menu-ancestor > a, #top-menu li.current-menu-item > a {
+    color: #000  !important;
+}
+#main-footer .container {
+    border-top: 3px double #ccc !important;
+    padding-top: 15px !important;
+}
+#main-footer, #footer-bottom {
+    background-color: transparent !important;
+}
+#artist-grid { margin-bottom: 58px; }
+.artist-grid-row { clear: both; }
+.artist-grid-item {
+    width: 33.33%;
+    float: left;
+    padding: 2%;
+}
+.artist-grid-row:after, #artist-grid:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+.artist-grid-item h5 {
+    text-align: left;
+    padding: 0;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #858585;
+}
+.artist-grid-image {
+    display: block;
+    width: 100%;
+    height: 300px;
+    background-position: center center;
+    background-size: 100%;
+    box-shadow: inset 0 0 0px 0px rgba(0,0,0,1);
+    opacity: .9;
+    transition: opacity .3s ease;
+}
+.artist-grid-image:hover,
+.artist-grid-image:active {
+    opacity: 1;
+}
+.entry-content.artist .et_pb_section,
+.entry-content.artist .et_pb_row {
+    padding-top: 0!important;
+    padding-bottom: 25px !important;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#page-nav {
+    margin-top: 10px;
+    border-top: 1px dotted #ccc;
+    padding-top: 10px;
+}
+#btn-prev {
+    float: left;
+    padding-left: 15px;
+}
+#btn-next {
+    float: right;
+    padding-right: 15px;
+}
+#btn-prev,
+#btn-next {
+    letter-spacing: 0;
+    font-size: 16px;
+    display: inline-block;
+    background: transparent;
+
+    border-radius: 5px;
+    position: relative;
+    transition: all .15s ease;
+    color: #999;
+    font-family: "Sorts Mill Goudy";
+    font-size: 18px;
+}
+#btn-prev:hover,
+#btn-next:hover {
+    color: #555;
+}
+#btn-prev:before,
+#btn-next:before {
+    position: absolute;
+    display: inline-block;
+}
+#btn-prev:before {
+    content:"<";
+    left: 0px;
+}
+#btn-next:before {
+    content:">";
+    right: 0px;2
+}
+.inner {
+    margin-bottom: 25px
+}
+.mobile-only {
+    display: none;
+}
+
+
+
+/***[ Brandefined Link Animation ]***/
+.brandefined-logo-container {
+	width:auto !important;
+	display:inline-block !important;
+	overflow:hidden !important;
+	margin-left:5px !important;
+}
+.overflow-container {
+	overflow:hidden !important;
+	display:inline-block !important;
+	padding-left:10px !important;
+	margin-left:-10px !important;
+}
+.brandefined-logo img {
+	-webkit-transition:.75s !important;
+	-moz-transition:.75s !important;
+	-o-transition:.75s !important;
+	transition:.75s !important;
+	z-index:100 !important;
+}
+.brandefined-logo img {
+	margin-bottom:4px !important;
+	margin-right:5px !important;
+	opacity:.4 !important;
+}
+.brandefined-logo span {
+	font-weight:bold !important;
+	opacity:0 !important;
+}
+.brandefined-logo-container {
+	cursor:pointer !important;
+}
+.brandefined-logo-container:hover .brandefined-logo img {
+	opacity:1 !important;
+}
+.brandefined-logo-container .brandefined-logo span {
+	margin-left:-150px !important;
+	opacity:0 !important;
+	-webkit-transition:.5s !important;
+	-moz-transition:.5s !important;
+	-o-transition:.5s !important;
+	transition:.5s !important;
+}
+/*---> Relies on some JS to add/remove class <---*/
+.brandefined-logo-container .brandefined-logo span.show {
+	margin-left:0 !important;
+	opacity:1 !important;
+}
+
+
+
+.et-social-instagram a:before {
+        content: '\e09a';
+    }
+
+
+/********** MAIN MENU - AJAX SEARCH **********/
+.et_header_style_centered #main-header div#et-top-navigation {
+    padding: 5px;
+}
+div#ajaxsearchpro1_1 {
+    position: absolute;
+    top: 5px;
+}
+
+
+/**********[ PAGINATION ]**********/
+.pagination a {
+    color: #666;
+    font-size: 16px;
+}
+.pagination a:hover {
+    color: #000;
+}
+
+/********** CATEGORY PAGE **********/
+#artists-by-category span {
+    color: #777;
+    transition: color .3s ease;
+}
+
+
+/********** FINE ART PAGE **********/
+.fine-arts a {
+    font-size: 16px!important;
+    text-transform: uppercase;
+}
+.fine-arts a.et_pb_button:hover {
+    background: #000;
+}
+.fine-arts img {
+    width: 100%;
+}
+.fine-arts p {
+    padding: 25px 0;
+}
+.fine-arts .et_pb_row.et_pb_row_ {
+    padding-bottom: 50px !important;
+}
+
+
+/********** WORK SINGLE PAGE **********/
+#work-single img {
+    width: 100%;
+    padding-right: 50px;
+}
+#work-info, .info {
+    text-align: left;
+}
+#work-info, .info p.work-media-type {
+    padding-bottom: 10px;
+}
+#work-info h3, .info h3 {
+    color: #777;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: 1px dotted #ccc;
+}
+#more-artist-works .current-art img{
+    border: 5px solid #333;
+}
+#work-single .pagination {
+    padding-top: 5px !important;
+}
+
+/********** ALL EXHIBITIONS PAGE **********/
+.exhibitions.upcoming .bd-grid {
+    padding-bottom: 30px;
+}
+
+/********** EXHIBITION SINGLE PAGE **********/
+.more-exhibitions-works img:hover {
+    border-color: #333;
+}
+#exhibition-info {
+    text-align: left;
+}
+#exhibition-info h3 {
+    color: #777;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: 1px dotted #ccc;
+}
+#exhibition-single img {
+    padding-right: 50px;
+}
+#works-info {
+    text-align: center;
+}
+#works-info img {
+    padding: 0px !important;
+}
+#works-info img:hover {
+    border: 5px solid #333;
+}
+#works-info .more-by {
+    text-align: left;
+}
+#works-info p {
+    color: #777;
+    font-weight: 500;
+}
+#works-info p a{
+    color: #777;
+    font-weight: 500;
+}
+#works-info p span {
+    font-weight: 100;
+}
+
+/********** ARTISTS SINGLE PAGE **********/
+#work-single {
+    padding-bottom: 0px;
+}
+#artist-works .works-row .bd-row {
+	margin-bottom: 0;
+}
+#artist-works .works-row {
+	padding-bottom: 0 !important;
+}
+#artist-works .works-row .pagination {
+	display: block;
+    padding-top: 25px !important;
+}
+#more-artist-works, #more-artist-works .works-row  {
+    padding-top: 0 !important;
+}
+
+
+/********** FOOTER  **********/
+#main-footer .container {
+    border-top: 3px double #ccc !important;
+}
+#main-footer, #footer-bottom {
+    background-color: transparent !important;
+}
+#footer-info a img {
+    -webkit-filter: invert(40%);
+    filter: invert(40%);
+}
+
+div.listing img.attachment-thumbnail {
+    width: 350px;
+    height: 250px;
+}

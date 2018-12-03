@@ -31,7 +31,7 @@
 								$image = get_the_post_thumbnail($post_id, 'thumbnail');
 						?>
 
-								<div class="bd-col col-1-4" >
+								<div class="bd-col col-1-4 listing" >
 									<div style="max-height: 250px; overflow: hidden">
 										<?php echo $image; ?>
 									</div>
