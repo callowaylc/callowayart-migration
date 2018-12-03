@@ -546,7 +546,11 @@ private def insert_work artist, listing
 end
 
 private def sanitize value
-  value.gsub(/\@.+?\=.+?(\s|$)/, "")
+  value
+    .gsub(/\@.+?\=.+?(\s|$)/, "")
+    .gsub(/\r/, "")
+    .gsub(/([a-z])\n([a-z])/i, "\\1 \\2")
+    .gsub(/\n/, "\n\n")
 end
 
 private def insert_exhibit artist, listing, exhibit

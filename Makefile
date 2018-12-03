@@ -58,9 +58,7 @@ release:
 orchestrate: clean build release
 
 bootstrap:
-	- docker rm -f bootstrap
-	docker-compose build bootstrap
-	docker-compose run -d --rm --name bootstrap bootstrap
+	docker-compose run --rm bootstrap
 
 tag:
 	@ docker tag $(REPOSITORY):latest $(REPOSITORY):`git rev-parse --short HEAD`
