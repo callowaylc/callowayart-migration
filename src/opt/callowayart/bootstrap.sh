@@ -67,3 +67,14 @@ rake -T
 rake replace_domain[migrated.callowayart.com]
 rake migrate
 
+# modify "sorting-order-by-start" field homepage grid
+cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
+  UPDATE wp_eg_grids SET
+    params = REPLACE(
+      params,
+      '"sorting-order-by-start":"date"',
+      '"sorting-order-by-start":"rand"'
+    )
+  WHERE
+    id = 1
+EOF
