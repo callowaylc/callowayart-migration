@@ -603,3 +603,9 @@ div.listing img.attachment-thumbnail {
     width: 350px;
     height: 250px;
 }
+
+div.archive-past-exhibitions img {
+    max-width: 150px;
+    max-height: 150px;
+    overflow: hidden;
+}
