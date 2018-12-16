@@ -1,4 +1,6 @@
 FROM ubuntu:16.04
+ENV PATH=/opt/callowayart/vendor/bin:${PATH}
+WORKDIR /opt/callowayart
 
 RUN true && \
   apt update && \
@@ -12,17 +14,18 @@ RUN true && \
     netcat \
     software-properties-common python-software-properties \
     ruby2.3 ruby2.3-dev ruby-mysql2 \
-    php7.0-cli php7.0-mbstring php7.0-mcrypt php7.0-mysql php7.0-xml && \
-  gem install bundler rake && \
-  mkdir -p /opt/callowayart
-
-WORKDIR /opt/callowayart
+    php7.0-cli php7.0-mbstring php7.0-mcrypt php7.0-mysql php7.0-xml \
+    zip unzip php7.0-zip && \
+  curl -Lso ${WORKDIR}/installer.php https://getcomposer.org/installer && \
+  php ${WORKDIR}/installer.php && \
+  gem install bundler rake
 
 COPY ./src/opt /opt
 COPY ./build/*.sql /opt/callowayart/
 COPY ./build/wordpress /opt/callowayart/
 
 RUN true && \
-  bundle install
+    php composer.phar install && \
+    bundle install
 
 CMD [ "./bootstrap.sh" ]

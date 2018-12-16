@@ -369,8 +369,8 @@ private def insert_work artist, listing
         '',
         "#{ sanitize listing['title'] }",
         "",
+        "works#{ artist['slug'] }#{ listing['title'].slugify }",
         "#{ artist['slug'] }-#{ listing['title'].slugify }",
-        "/#{ artist['slug'] }/#{ listing['title'].slugify }",
         "works"
       )
   }
@@ -393,7 +393,9 @@ private def insert_work artist, listing
     :'_works-size' => 'field_56df2554708e5',
     :'works-inventory' => listing['inventory_id'],
     :'_works-inventory' => 'field_58477d69efc86',
-    :'eg-artist' => deslug( artist['slug'] )
+    :'eg-artist' => deslug( artist['slug'] ),
+    custom_permalink: "works/#{ artist['slug'] }/#{ listing['title'].slugify }",
+    _wp_old_slug: "works/#{ artist['slug'] }/#{ listing['title'].slugify }"
 
   }.each do | field, value |
     query "wordpress", %{
