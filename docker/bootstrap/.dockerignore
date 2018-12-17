@@ -1,4 +1,4 @@
 *
-!src/opt
+!src/opt/callowayart/*
 !build/*.sql
 !build/wordpress

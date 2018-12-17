@@ -48,12 +48,15 @@ build:
 	- cp ./docker/wordpress/.dockerignore .
 	docker-compose build wordpress
 
+test:
+	docker-compose run bootstrap bash
+
 push:
 	docker-compose push varnish wordpress
 
 release:
 	docker-compose up -d --remove-orphans --force-recreate varnish
-	docker-compose run -d --rm bootstrap
+	docker-compose up -d bootstrap
 
 orchestrate: clean build release
 

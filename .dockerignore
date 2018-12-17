@@ -1,4 +1,5 @@
 *
 !src/var
 !src/opt/callowayart/start.sh
+!src/opt/callowayart/composer.json
 !build/wordpress
