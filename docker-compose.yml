@@ -16,6 +16,7 @@ services:
     image: bootstrap:latest
     container_name: bootstrap
     command: bash -c ./bootstrap.sh
+    volumes:
       - migrated:/opt/callowayart/wp-content/uploads/migrated
     environment:
       MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
