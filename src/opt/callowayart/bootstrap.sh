@@ -64,6 +64,8 @@ cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
 EOF
 
 # perform actual migration
+mkdir -p $WORKDIR/wp-content/uploads/migrated
+
 rake -T
 rake replace_domain[migrated.callowayart.com]
 rake migrate

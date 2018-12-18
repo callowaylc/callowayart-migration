@@ -1,6 +1,9 @@
 FROM ubuntu:16.04
+
 ENV PATH=/opt/callowayart/vendor/bin:${PATH}
-WORKDIR /opt/callowayart
+ENV WORKDIR=/opt/callowayart
+
+WORKDIR ${WORKDIR}
 
 RUN true && \
   apt update && \
