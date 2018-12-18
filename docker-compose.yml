@@ -16,9 +16,6 @@ services:
     image: bootstrap:latest
     container_name: bootstrap
     command: bash -c ./bootstrap.sh
-    volumes:
-      - ./src/opt/callowayart/bin/post:/opt/callowayart/bin/post
-      - ./src/opt/callowayart/task/migrate.rake:/opt/callowayart/task/migrate.rake
       - migrated:/opt/callowayart/wp-content/uploads/migrated
     environment:
       MIGRATION_AWS_ACCESS_KEY_ID: ${MIGRATION_AWS_ACCESS_KEY_ID}
@@ -77,5 +74,4 @@ services:
       MIGRATION_AWS_SECRET_ACCESS_KEY: ${MIGRATION_AWS_SECRET_ACCESS_KEY}
     volumes:
       - migrated:/var/www/html/wp-content/uploads/migrated
-      - ./build/wordpress/wp-content:/var/www/html/wp-content:rw
     container_name: wordpress
