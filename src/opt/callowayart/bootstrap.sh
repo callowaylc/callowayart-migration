@@ -63,12 +63,6 @@ cat <<EOF | mysql -hdb -uroot -pwordpress -Dwordpress
     option_name="siteurl"
 EOF
 
-# install wordpress plugins
-wp plugin install custom-permalinks \
-  --version=1.4.0 \
-  --activate \
-  --allow-root
-
 # perform actual migration
 rake -T
 rake replace_domain[migrated.callowayart.com]
